@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "description": "Example project showing how to use Sass middleware",
   "homepage": "https://mountaindrawn.com/glitch-dot-game",
-  "main": "server.js",
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/",
     "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
@@ -31,12 +30,6 @@
     "prettier": "^1.14.2"
   },
   "engines": {
-    "node": "4.4.5"
-  },
-  "keywords": [
-    "node",
-    "express",
-    "sass"
-  ],
-  "license": "MIT"
+    "node": "8.x"
+  }
 }

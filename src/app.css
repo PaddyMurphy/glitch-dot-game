@@ -126,7 +126,6 @@ body {
     min-width: 50px;
     text-align: center;
     padding: 10px; }
-  .app-main {
-    flex: 1; }
   .app-game {
-    background: #fff; }
+    background: #fff;
+    flex: 1; }

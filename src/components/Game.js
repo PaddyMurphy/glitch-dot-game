@@ -13,6 +13,7 @@ and receives points when they are successful.
 */
 import React, {PureComponent} from 'react';
 
+// game vars
 let canvas, ctx;
 let dotId = 1;
 let dotCount = 1;
@@ -20,12 +21,9 @@ let dotList = [];
 let velocity = 10;
 let minVelocity = 10;
 let maxVelocity = 100;
-let minWidth = 10;
-let maxWidth = 30;
-let started = false;
-let paused = false;
-let score = 0;
-let btnText = !paused ? 'START' : 'PAUSED';
+let minWidth = 5; // radius
+let maxWidth = 50;
+let scoreScale = [];
 
 function Dot(dotId, width, y, x, color, status, points) {
   this.dotId = dotId;
@@ -40,8 +38,8 @@ function Dot(dotId, width, y, x, color, status, points) {
 
 const Button = props => {
   return (
-    <button className="app-btn" {...props}>
-      {btnText}
+    <button className="app-btn" onClick={props.onClick}>
+      {props.text}
     </button>
   );
 };
@@ -69,13 +67,22 @@ class Game extends PureComponent {
 
     this.clickDot = this.clickDot.bind(this);
     this.toggleGame = this.toggleGame.bind(this);
+    this.runGame = this.runGame.bind(this);
 
-    this.state = {};
+    this.state = {
+      score: 0,
+      started: false,
+      paused: false,
+    };
   }
 
   componentDidMount() {
     this.initializeCanvas();
     this.runGame();
+  }
+
+  componentWillUnmount() {
+    canvas.removeEventListener('click', this.clickDot, false);
   }
 
   getRandomIntInclusive(min, max) {
@@ -88,7 +95,7 @@ class Game extends PureComponent {
   drawDot() {
     dotList.forEach(dot => {
       if (dot.status === 1) {
-        dotCount++;
+        dotCount = dotCount++;
         ctx.beginPath();
         ctx.arc(dot.x, dot.y, dot.width, 0, Math.PI * 2);
         ctx.fillStyle = dot.color;
@@ -99,12 +106,21 @@ class Game extends PureComponent {
   }
 
   normalizeRange(val, min, max) {
-    // TODO: return inverse value (i.e. 7 = 3)
+    // return inverse value (i.e. larger dot = smaller value)
+    // normalize scale 1-10
     const delta = max - min;
-    return Math.round((val - min) / delta);
+    let value = Math.round(((val - min) / delta) * 2);
+    value = value > 10 ? 10 : value; // some rounding goes to 11
+    // map value to points
+    const normalized = scoreScale.find(scale => scale.points === value);
+
+    return normalized.actual;
   }
 
   addDot() {
+    // only add dots when game is running
+    if (this.state.paused || !this.state.started) return;
+
     const dotWidth = this.getRandomIntInclusive(minWidth, maxWidth);
     const dotY = dotWidth; // start off canvas
     const dotX = this.getRandomIntInclusive(1, canvas.width);
@@ -131,6 +147,10 @@ class Game extends PureComponent {
     ctx = canvas.getContext('2d');
     // events
     canvas.addEventListener('click', this.clickDot, false);
+    // set score scale
+    for (let i = 1, len = 11; i < len; i++) {
+      scoreScale.push({points: i, actual: len - i});
+    }
   }
 
   sliderChange(e) {
@@ -146,22 +166,10 @@ class Game extends PureComponent {
     dotList.forEach((dot, i) => {
       if (this.isDotClicked(pos, dot)) {
         // TODO: allow only one click if touching
-        score = score + dot.points;
-        this.displayScore();
+        this.setState({score: this.state.score + dot.points});
         dot.status = 0;
       }
     });
-  }
-  // update w/o state to prevent rerendering
-  displayScore() {
-    const scoreHtml = document.querySelector('.app-score');
-    scoreHtml.innerHTML = score.toString();
-  }
-
-  displayBtnText() {
-    const btn = document.querySelector('.app-btn');
-    console.log(btnText);
-    btn.value = btnText;
   }
 
   isDotClicked(pos, dot) {
@@ -190,12 +198,11 @@ class Game extends PureComponent {
   }
 
   toggleGame(event) {
-    if (!started) {
-      started = true;
+    if (!this.state.started) {
+      this.setState({started: true});
     } else {
-      paused = !paused;
+      this.setState({paused: !this.state.paused});
     }
-    this.displayBtnText();
   }
 
   runGame() {
@@ -209,7 +216,7 @@ class Game extends PureComponent {
       that.collisionDetection();
       // set new dot position
       for (let i = 0, len = dotList.length; i < len; i++) {
-        if (dotList[i] && !paused && started) {
+        if (dotList[i] && !that.state.paused && that.state.started) {
           // TODO: normalize velocity for correct timing
           dotList[i].y = dotList[i].y = ~~dotList[i].y + velocity / 10;
         }
@@ -221,22 +228,24 @@ class Game extends PureComponent {
     window.setInterval(() => {
       this.addDot();
     }, 1000);
+
     // init
     draw();
   }
 
   render() {
+    const {score, started, paused} = this.state;
+    const btnText = !started || paused ? 'START' : 'PAUSE';
+
     return (
       <React.Fragment>
         <div className="app-menu">
-          <b className="app-score">0</b>
-          <Button onClick={this.toggleGame} />
+          <b className="app-score">{score}</b>
+          <Button onClick={this.toggleGame} text={btnText} />
           <Range onChange={this.sliderChange} />
         </div>
-        <div className="app-main">
-          <div className="app-game">
-            <canvas id="game" />
-          </div>
+        <div className="app-game">
+          <canvas id="game" />
         </div>
       </React.Fragment>
     );

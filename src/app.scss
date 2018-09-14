@@ -80,11 +80,8 @@ body {
     padding: 10px;
   }
 
-  &-main {
-    flex: 1;
-  }
-
   &-game {
     background: #fff;
+    flex: 1;
   }
 }
