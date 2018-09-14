@@ -2,6 +2,7 @@
   "name": "sass",
   "version": "0.1.0",
   "description": "Example project showing how to use Sass middleware",
+  "homepage": "https://mountaindrawn.com/glitch-dot-game",
   "main": "server.js",
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/",
@@ -11,12 +12,13 @@
     "build-js": "react-scripts build",
     "build": "npm-run-all build-css build-js",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "express": "^4.16.3",
-    "node-sass-middleware": "^0.11.0",
     "node-sass-chokidar": "^1.3.3",
+    "node-sass-middleware": "^0.11.0",
     "npm-run-all": "^4.1.3",
     "react": "^16.5.0",
     "react-dom": "^16.5.0",
@@ -27,6 +29,7 @@
     "eslint": "^5.4.0",
     "eslint-plugin-jsx-a11y": "^6.1.1",
     "eslint-plugin-prettier": "^2.6.2",
+    "gh-pages": "^1.2.0",
     "prettier": "^1.14.2"
   },
   "engines": {
