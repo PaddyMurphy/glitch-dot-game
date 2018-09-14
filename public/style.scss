@@ -1,0 +1,90 @@
+@import './css/_minireset.scss';
+
+// variables
+$default-padding: 20px;
+// colors
+$app-primary: #1d85f0;
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+}
+
+.app {
+  background: #eee;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  &-btn {
+    cursor: pointer;
+    font-size: 18px;
+    margin-left: auto;
+    margin-right: $default-padding;
+    padding: calc(#{$default-padding} / 2) $default-padding;
+    min-width: 150px;
+  }
+
+  &-slider {
+    display: flex;
+    min-height: 50px;
+  }
+
+  &-slider-input {
+    margin-top: auto;
+    margin-bottom: 5px;
+    min-width: 200px;
+    position: relative;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &:before,
+    &:after {
+      content: '';
+      display: inline-block;
+      font-size: 30px;
+      width: 30px;
+      height: 30px;
+      position: absolute;
+      top: -30px;
+    }
+
+    &:before {
+      content: '🐢';
+      left: -10px;
+    }
+
+    &:after {
+      content: '🚀';
+      right: -10px;
+    }
+  }
+
+  &-menu {
+    background: $app-primary;
+    display: flex;
+    flex-wrap: wrap;
+    padding: $default-padding;
+    position: absolute;
+    width: 100vw;
+  }
+
+  &-score {
+    background: #fff;
+    border-radius: 50%;
+    font-size: 28px;
+    min-width: 50px;
+    text-align: center;
+    padding: 10px;
+  }
+
+  &-main {
+    flex: 1;
+  }
+
+  &-game {
+    background: #fff;
+  }
+}
