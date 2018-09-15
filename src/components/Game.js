@@ -24,7 +24,7 @@ let minVelocity = 10;
 let maxVelocity = 100;
 let minWidth = 5; // radius
 let maxWidth = 50;
-let scoreScale = [];
+let scoreScale = []; // mapped values for score and opacity
 
 function Dot(dotId, width, y, x, color, status, points) {
   this.dotId = dotId;
@@ -33,7 +33,7 @@ function Dot(dotId, width, y, x, color, status, points) {
   this.x = x;
   this.velocity = velocity; // velocity is constant
   this.color = color;
-  this.status = status;
+  this.status = status; // 1=show, 0=remove
   this.points = points;
 }
 
@@ -48,10 +48,14 @@ const Button = props => {
 const Range = props => {
   return (
     <div className="app-slider">
+      <label className="sr-only" htmlFor="app-slider">
+        Speed adjustment
+      </label>
       <input
         type="range"
         className="app-slider-input"
         name="app-slider"
+        id="app-slider"
         min={minVelocity}
         max={maxVelocity}
         defaultValue={velocity}
@@ -96,10 +100,15 @@ class Game extends PureComponent {
   drawDot() {
     dotList.forEach(dot => {
       if (dot.status === 1) {
+        // get inverse value
+        const inverse = scoreScale.find(scale => scale.points === dot.points);
+        let opacity = Math.round(inverse.actual) * 0.1;
+        opacity = opacity <= 0.1 ? 0.15 : opacity;
+
         dotCount = dotCount++;
         ctx.beginPath();
         ctx.arc(dot.x, dot.y, dot.width, 0, Math.PI * 2);
-        ctx.fillStyle = dot.color;
+        ctx.fillStyle = `rgba(29, 133, 240, ${opacity})`;
         ctx.fill();
         ctx.closePath();
       }
@@ -123,10 +132,10 @@ class Game extends PureComponent {
     if (this.state.paused || !this.state.started) return;
 
     const dotWidth = this.getRandomIntInclusive(minWidth, maxWidth);
-    const dotY = dotWidth; // start off canvas
+    const dotY = -dotWidth; // start off canvas
     const dotX = this.getRandomIntInclusive(1, canvas.width);
     const color = '#1D85F0';
-    const status = 1; // 1=show, 0=remove
+    const status = 1;
     const points = this.normalizeRange(dotWidth, 1, 10);
     // add random properties
     dotList[dotId++] = new Dot(
@@ -170,8 +179,7 @@ class Game extends PureComponent {
 
     dotList.forEach((dot, i) => {
       if (this.isDotClicked(pos, dot)) {
-        // TODO: allow only one click if touching
-        // assign separate colors to dots
+        // set score and remove
         this.setState({score: this.state.score + dot.points});
         dot.status = 0;
       }
@@ -215,17 +223,17 @@ class Game extends PureComponent {
     const that = this;
 
     // Draw loop
-    function draw() {
+    function draw(timestamp) {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       that.drawDot();
       that.collisionDetection();
 
-      // for (var i = 10; i > 5; i--) { alert(i); }
       // set new dot position
       for (let i = dotList.length; i >= 0; i--) {
         if (dotList[i] && !that.state.paused && that.state.started) {
-          // normalize velocity for correct timing
-          dotList[i].y = Math.round(dotList[i].y) + velocity / 10;
+          // normalize velocity for correct timing for 60fps
+          const newVelocity = (velocity / 10) * 0.5;
+          dotList[i].y = Math.round(dotList[i].y) + newVelocity;
         }
       }
       // loop draw
@@ -243,8 +251,6 @@ class Game extends PureComponent {
   render() {
     const {score, started, paused} = this.state;
     const btnText = !started || paused ? 'START' : 'PAUSE';
-
-    console.log(dotList);
 
     return (
       <div className="app">

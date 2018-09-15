@@ -1,0 +1,17 @@
+// variables
+$default-padding: 20px;
+// colors
+$app-primary: #1d85f0;
+
+// only display to screen readers
+.sr-only {
+  display: block;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px 1px 1px 1px);
+  clip: rect(1px, 1px, 1px, 1px);
+  clip-path: inset(1px);
+  white-space: nowrap;
+  position: absolute;
+}

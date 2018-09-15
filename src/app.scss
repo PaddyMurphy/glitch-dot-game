@@ -1,20 +1,9 @@
 @import './css/_minireset.scss';
-
-// variables
-$default-padding: 20px;
-// colors
-$app-primary: #1d85f0;
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
-    Arial, sans-serif;
-}
+@import './css/_helpers.scss';
 
 .app {
-  background: #eee;
   display: flex;
   flex-direction: column;
-  height: 100vh;
 
   &-btn {
     cursor: pointer;
@@ -63,7 +52,7 @@ body {
   }
 
   &-menu {
-    background: $app-primary;
+    //background: $app-primary;
     display: flex;
     flex-wrap: wrap;
     padding: $default-padding;
