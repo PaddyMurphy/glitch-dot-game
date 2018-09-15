@@ -12,6 +12,7 @@ and receives points when they are successful.
 - clicking dot removes it and scores
 */
 import React, {PureComponent} from 'react';
+import '../app.css';
 
 // game vars
 let canvas, ctx;
@@ -140,7 +141,6 @@ class Game extends PureComponent {
   }
 
   initializeCanvas() {
-    //const slider = document.getElementById('app-slider');
     canvas = document.getElementById('game');
     canvas.height = window.innerHeight;
     canvas.width = window.innerWidth;
@@ -163,9 +163,15 @@ class Game extends PureComponent {
       y: e.clientY,
     };
 
+    // remove empty
+    dotList = dotList.filter(dot => {
+      return dot;
+    });
+
     dotList.forEach((dot, i) => {
       if (this.isDotClicked(pos, dot)) {
         // TODO: allow only one click if touching
+        // assign separate colors to dots
         this.setState({score: this.state.score + dot.points});
         dot.status = 0;
       }
@@ -179,7 +185,7 @@ class Game extends PureComponent {
   }
 
   collisionDetection() {
-    for (let i = 0, len = dotList.length; i < len; i++) {
+    for (let i = dotList.length; i >= 0; i--) {
       if (dotList[i]) {
         // prevent right edge cutting off
         if (dotList[i].x > canvas.width - dotList[i].width) {
@@ -211,17 +217,18 @@ class Game extends PureComponent {
     // Draw loop
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      // loop draw
       that.drawDot();
       that.collisionDetection();
+
+      // for (var i = 10; i > 5; i--) { alert(i); }
       // set new dot position
-      for (let i = 0, len = dotList.length; i < len; i++) {
+      for (let i = dotList.length; i >= 0; i--) {
         if (dotList[i] && !that.state.paused && that.state.started) {
-          // TODO: normalize velocity for correct timing
-          dotList[i].y = dotList[i].y = ~~dotList[i].y + velocity / 10;
+          // normalize velocity for correct timing
+          dotList[i].y = Math.round(dotList[i].y) + velocity / 10;
         }
       }
-
+      // loop draw
       window.requestAnimationFrame(draw);
     }
     // add a new dot every second
@@ -237,8 +244,10 @@ class Game extends PureComponent {
     const {score, started, paused} = this.state;
     const btnText = !started || paused ? 'START' : 'PAUSE';
 
+    console.log(dotList);
+
     return (
-      <React.Fragment>
+      <div className="app">
         <div className="app-menu">
           <b className="app-score">{score}</b>
           <Button onClick={this.toggleGame} text={btnText} />
@@ -247,7 +256,7 @@ class Game extends PureComponent {
         <div className="app-game">
           <canvas id="game" />
         </div>
-      </React.Fragment>
+      </div>
     );
   }
 }
