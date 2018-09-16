@@ -94,16 +94,20 @@ th {
     cursor: pointer;
     font-size: 18px;
     margin-left: auto;
-    margin-right: 20px;
+    min-width: 150px;
     padding: calc(20px / 2) 20px;
-    min-width: 150px; }
+    pointer-events: all; }
   .app-slider {
     display: flex;
-    min-height: 50px; }
+    padding: 20px;
+    pointer-events: none; }
+    @media (max-width: 480px) {
+      .app-slider {
+        flex: 1; } }
   .app-slider-input {
-    margin-top: auto;
-    margin-bottom: 5px;
+    margin: auto auto 5px;
     min-width: 200px;
+    pointer-events: all;
     position: relative; }
     .app-slider-input:hover {
       cursor: pointer; }
@@ -124,9 +128,17 @@ th {
   .app-menu {
     display: flex;
     flex-wrap: wrap;
-    padding: 20px;
+    pointer-events: none;
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100vw; }
+  .app-score-wrapper {
+    align-content: space-between;
+    align-items: center;
+    display: flex;
+    flex: 1 1 0;
+    padding: 20px; }
   .app-score {
     background: #fff;
     border-radius: 50%;
@@ -135,5 +147,4 @@ th {
     text-align: center;
     padding: 10px; }
   .app-game {
-    background: #fff;
-    flex: 1; }
+    background: #fff; }

@@ -102,6 +102,7 @@ class Game extends PureComponent {
       if (dot.status === 1) {
         // get inverse value
         const inverse = scoreScale.find(scale => scale.points === dot.points);
+        // set opacity based on score
         let opacity = Math.round(inverse.actual) * 0.1;
         opacity = opacity <= 0.1 ? 0.15 : opacity;
 
@@ -114,6 +115,8 @@ class Game extends PureComponent {
       }
     });
   }
+
+  dotFactory() {}
 
   normalizeRange(val, min, max) {
     // return inverse value (i.e. larger dot = smaller value)
@@ -255,8 +258,10 @@ class Game extends PureComponent {
     return (
       <div className="app">
         <div className="app-menu">
-          <b className="app-score">{score}</b>
-          <Button onClick={this.toggleGame} text={btnText} />
+          <div className="app-score-wrapper">
+            <b className="app-score">{score}</b>
+            <Button onClick={this.toggleGame} text={btnText} />
+          </div>
           <Range onChange={this.sliderChange} />
         </div>
         <div className="app-game">

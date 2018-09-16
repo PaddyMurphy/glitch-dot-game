@@ -9,20 +9,24 @@
     cursor: pointer;
     font-size: 18px;
     margin-left: auto;
-    margin-right: $default-padding;
-    padding: calc(#{$default-padding} / 2) $default-padding;
     min-width: 150px;
+    padding: calc(#{$default-padding} / 2) $default-padding;
+    pointer-events: all;
   }
 
   &-slider {
     display: flex;
-    min-height: 50px;
+    padding: $default-padding;
+    pointer-events: none;
+    @media (max-width: $screen-sm) {
+      flex: 1;
+    }
   }
 
   &-slider-input {
-    margin-top: auto;
-    margin-bottom: 5px;
+    margin: auto auto 5px;
     min-width: 200px;
+    pointer-events: all;
     position: relative;
 
     &:hover {
@@ -52,12 +56,21 @@
   }
 
   &-menu {
-    //background: $app-primary;
     display: flex;
     flex-wrap: wrap;
-    padding: $default-padding;
+    pointer-events: none;
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100vw;
+  }
+
+  &-score-wrapper {
+    align-content: space-between;
+    align-items: center;
+    display: flex;
+    flex: 1 1 0;
+    padding: $default-padding;
   }
 
   &-score {
@@ -71,6 +84,5 @@
 
   &-game {
     background: #fff;
-    flex: 1;
   }
 }
