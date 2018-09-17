@@ -12,30 +12,26 @@ and receives points when they are successful.
 - clicking dot removes it and scores
 */
 import React, {PureComponent} from 'react';
+import {
+  Dot,
+  ExplodingParticle,
+  normalizeRange,
+  getRandomIntInclusive,
+} from './gameHelpers';
 import '../app.css';
 
 // game vars
-let canvas, ctx;
+let canvas, ctx, dotInterval;
 let dotId = 1;
 let dotCount = 1;
 let dotList = [];
-let velocity = 10;
+let velocity = 10; // pixels per sec
 let minVelocity = 10;
 let maxVelocity = 100;
 let minWidth = 5; // radius
 let maxWidth = 50;
 let scoreScale = []; // mapped values for score and opacity
-
-function Dot(dotId, width, y, x, color, status, points) {
-  this.dotId = dotId;
-  this.width = width;
-  this.y = y;
-  this.x = x;
-  this.velocity = velocity; // velocity is constant
-  this.color = color;
-  this.status = status; // 1=show, 0=remove
-  this.points = points;
-}
+let particles = [];
 
 const Button = props => {
   return (
@@ -88,13 +84,24 @@ class Game extends PureComponent {
 
   componentWillUnmount() {
     canvas.removeEventListener('click', this.clickDot, false);
+    clearInterval(dotInterval);
   }
 
-  getRandomIntInclusive(min, max) {
-    // max and minimum is inclusive
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  initializeCanvas() {
+    canvas = document.getElementById('game');
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    ctx = canvas.getContext('2d');
+    // events
+    canvas.addEventListener('click', this.clickDot, false);
+    // set score scale
+    for (let i = 1, len = 11; i < len; i++) {
+      scoreScale.push({points: i, actual: len - i});
+    }
+    // add a new dot every second
+    dotInterval = window.setInterval(() => {
+      this.addDot();
+    }, 1000);
   }
 
   drawDot() {
@@ -116,30 +123,17 @@ class Game extends PureComponent {
     });
   }
 
-  dotFactory() {}
-
-  normalizeRange(val, min, max) {
-    // return inverse value (i.e. larger dot = smaller value)
-    // normalize scale 1-10
-    const delta = max - min;
-    let value = Math.round(((val - min) / delta) * 2);
-    value = value > 10 ? 10 : value; // some rounding goes to 11
-    // map value to points
-    const normalized = scoreScale.find(scale => scale.points === value);
-
-    return normalized.actual;
-  }
-
   addDot() {
+    const hasFocus = document.hasFocus() ? true : false;
     // only add dots when game is running
-    if (this.state.paused || !this.state.started) return;
+    if (this.state.paused || !this.state.started || !hasFocus) return;
 
-    const dotWidth = this.getRandomIntInclusive(minWidth, maxWidth);
+    const dotWidth = getRandomIntInclusive(minWidth, maxWidth);
     const dotY = -dotWidth; // start off canvas
-    const dotX = this.getRandomIntInclusive(1, canvas.width);
+    const dotX = getRandomIntInclusive(1, canvas.width);
     const color = '#1D85F0';
     const status = 1;
-    const points = this.normalizeRange(dotWidth, 1, 10);
+    const points = normalizeRange(dotWidth, 1, 10, scoreScale);
     // add random properties
     dotList[dotId++] = new Dot(
       dotId,
@@ -149,20 +143,8 @@ class Game extends PureComponent {
       color,
       status,
       points,
+      velocity,
     );
-  }
-
-  initializeCanvas() {
-    canvas = document.getElementById('game');
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
-    ctx = canvas.getContext('2d');
-    // events
-    canvas.addEventListener('click', this.clickDot, false);
-    // set score scale
-    for (let i = 1, len = 11; i < len; i++) {
-      scoreScale.push({points: i, actual: len - i});
-    }
   }
 
   sliderChange(e) {
@@ -181,10 +163,13 @@ class Game extends PureComponent {
     });
 
     dotList.forEach((dot, i) => {
-      if (this.isDotClicked(pos, dot)) {
+      // check status to prevent multiple clicks
+      if (this.isDotClicked(pos, dot) && dot.status) {
         // set score and remove
         this.setState({score: this.state.score + dot.points});
         dot.status = 0;
+        // set up popped animation
+        this.setupParticles(dot, pos);
       }
     });
   }
@@ -222,33 +207,69 @@ class Game extends PureComponent {
     }
   }
 
-  runGame() {
-    const that = this;
+  // popped animation
+  setupParticles(dot, pos) {
+    let reductionFactor = 17; //prevent too many particles
+    let width = dot.width * 2;
+    let height = width;
+    let count = 0;
 
-    // Draw loop
-    function draw(timestamp) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      that.drawDot();
-      that.collisionDetection();
+    // fill particles inside dot
+    for (let localX = 0; localX < width; localX++) {
+      for (let localY = 0; localY < height; localY++) {
+        if (count % reductionFactor === 0) {
+          this.createParticleAtPoint(pos.x, pos.y);
+        }
+        count++;
+      }
+    }
+  }
 
-      // set new dot position
-      for (let i = dotList.length; i >= 0; i--) {
-        if (dotList[i] && !that.state.paused && that.state.started) {
-          // normalize velocity for correct timing for 60fps
-          const newVelocity = (velocity / 10) * 0.5;
-          dotList[i].y = Math.round(dotList[i].y) + newVelocity;
+  createParticleAtPoint(x, y, colorData) {
+    let particle = new ExplodingParticle(ctx);
+    particle.startX = x;
+    particle.startY = y;
+    particle.startTime = Date.now();
+
+    particles.push(particle);
+  }
+
+  animateParticles() {
+    // Draw all of our particles in their new location
+    for (let i = 0; i < particles.length; i++) {
+      particles[i].draw(ctx);
+
+      // clean up if the last particle is done animating
+      if (i === particles.length - 1) {
+        let percent =
+          (Date.now() - particles[i].startTime) /
+          particles[i].animationDuration;
+
+        if (percent > 1) {
+          particles = [];
         }
       }
-      // loop draw
-      window.requestAnimationFrame(draw);
     }
-    // add a new dot every second
-    window.setInterval(() => {
-      this.addDot();
-    }, 1000);
+  }
 
-    // init
-    draw();
+  runGame(timestamp) {
+    const {paused, started} = this.state;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    this.drawDot();
+    this.collisionDetection();
+    this.animateParticles();
+
+    // set new dot position
+    for (let i = dotList.length; i >= 0; i--) {
+      if (dotList[i] && !paused && started) {
+        // normalize velocity for correct timing for 60fps
+        const newVelocity = (velocity / 10) * 0.5;
+        dotList[i].y = Math.round(dotList[i].y) + newVelocity;
+      }
+    }
+    // loop draw
+    window.requestAnimationFrame(this.runGame);
   }
 
   render() {

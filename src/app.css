@@ -100,10 +100,12 @@ th {
   .app-slider {
     display: flex;
     padding: 20px;
+    margin-right: 10px;
     pointer-events: none; }
     @media (max-width: 480px) {
       .app-slider {
-        flex: 1; } }
+        flex: 1;
+        margin-right: 0; } }
   .app-slider-input {
     margin: auto auto 5px;
     min-width: 200px;
@@ -148,3 +150,5 @@ th {
     padding: 10px; }
   .app-game {
     background: #fff; }
+    .app-game:hover {
+      cursor: crosshair; }

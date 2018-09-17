@@ -1,7 +1,7 @@
 {
-  "name": "sass",
+  "name": "Dots",
   "version": "0.1.0",
-  "description": "Example project showing how to use Sass middleware",
+  "description": "Dot game",
   "homepage": "https://mountaindrawn.com/glitch-dot-game",
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/",
