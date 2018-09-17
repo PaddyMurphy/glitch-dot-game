@@ -1,11 +1,11 @@
+import React from 'react';
 // Dot factory
-export function Dot(dotId, width, y, x, color, status, points, velocity) {
+export function Dot(dotId, width, y, x, status, points, velocity) {
   this.dotId = dotId;
   this.width = width;
   this.y = y;
   this.x = x;
   this.velocity = velocity; // velocity is constant
-  this.color = color;
   this.status = status; // 1=show, 0=remove
   this.points = points;
 }
@@ -58,3 +58,12 @@ export function getRandomIntInclusive(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+export const GameInstructions = props => {
+  return (
+    <div className="app-instructions">
+      Get points by popping randomly sized dots as they drift down. Smaller dots
+      are worth more points. Use the slider to adjust speed.
+    </div>
+  );
+};

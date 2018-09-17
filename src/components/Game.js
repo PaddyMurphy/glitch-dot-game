@@ -17,6 +17,7 @@ import {
   ExplodingParticle,
   normalizeRange,
   getRandomIntInclusive,
+  GameInstructions,
 } from './gameHelpers';
 import '../app.css';
 
@@ -105,6 +106,8 @@ class Game extends PureComponent {
   }
 
   drawDot() {
+    const {paused, started} = this.state;
+
     dotList.forEach(dot => {
       if (dot.status === 1) {
         // get inverse value
@@ -121,6 +124,15 @@ class Game extends PureComponent {
         ctx.closePath();
       }
     });
+
+    // set new dot position
+    for (let i = dotList.length; i >= 0; i--) {
+      if (dotList[i] && !paused && started) {
+        // normalize velocity for correct timing for 60fps
+        const newVelocity = (velocity / 10) * 0.5;
+        dotList[i].y = Math.round(dotList[i].y) + newVelocity;
+      }
+    }
   }
 
   addDot() {
@@ -131,7 +143,6 @@ class Game extends PureComponent {
     const dotWidth = getRandomIntInclusive(minWidth, maxWidth);
     const dotY = -dotWidth; // start off canvas
     const dotX = getRandomIntInclusive(1, canvas.width);
-    const color = '#1D85F0';
     const status = 1;
     const points = normalizeRange(dotWidth, 1, 10, scoreScale);
     // add random properties
@@ -140,7 +151,6 @@ class Game extends PureComponent {
       dotWidth,
       dotY,
       dotX,
-      color,
       status,
       points,
       velocity,
@@ -226,7 +236,7 @@ class Game extends PureComponent {
   }
 
   createParticleAtPoint(x, y, colorData) {
-    let particle = new ExplodingParticle(ctx);
+    let particle = new ExplodingParticle();
     particle.startX = x;
     particle.startY = y;
     particle.startTime = Date.now();
@@ -253,21 +263,10 @@ class Game extends PureComponent {
   }
 
   runGame(timestamp) {
-    const {paused, started} = this.state;
-
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     this.drawDot();
     this.collisionDetection();
     this.animateParticles();
-
-    // set new dot position
-    for (let i = dotList.length; i >= 0; i--) {
-      if (dotList[i] && !paused && started) {
-        // normalize velocity for correct timing for 60fps
-        const newVelocity = (velocity / 10) * 0.5;
-        dotList[i].y = Math.round(dotList[i].y) + newVelocity;
-      }
-    }
     // loop draw
     window.requestAnimationFrame(this.runGame);
   }
@@ -285,6 +284,9 @@ class Game extends PureComponent {
           </div>
           <Range onChange={this.sliderChange} />
         </div>
+
+        {!started && <GameInstructions />}
+
         <div className="app-game">
           <canvas id="game" />
         </div>
