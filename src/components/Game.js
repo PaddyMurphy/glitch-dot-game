@@ -13,6 +13,8 @@ and receives points when they are successful.
 */
 import React, {PureComponent} from 'react';
 import {
+  Button,
+  Checkbox,
   Dot,
   ExplodingParticle,
   normalizeRange,
@@ -34,14 +36,6 @@ let maxWidth = 50;
 let scoreScale = []; // mapped values for score and opacity
 let particles = [];
 
-const Button = props => {
-  return (
-    <button className="app-btn" onClick={props.onClick}>
-      {props.text}
-    </button>
-  );
-};
-
 const Range = props => {
   return (
     <div className="app-slider">
@@ -57,7 +51,7 @@ const Range = props => {
         max={maxVelocity}
         defaultValue={velocity}
         step="1"
-        {...props}
+        onChange={props.onChange}
       />
     </div>
   );
@@ -69,12 +63,14 @@ class Game extends PureComponent {
 
     this.clickDot = this.clickDot.bind(this);
     this.toggleGame = this.toggleGame.bind(this);
+    this.toggleBrutal = this.toggleBrutal.bind(this);
     this.runGame = this.runGame.bind(this);
 
     this.state = {
       score: 0,
       started: false,
       paused: false,
+      brutal: false,
     };
   }
 
@@ -203,6 +199,10 @@ class Game extends PureComponent {
         }
         // remove after reaching past bottom
         if (dotList[i].y - dotList[i].width >= canvas.height) {
+          // brutal mode substracts from the score
+          if (this.state.brutal) {
+            this.setState({score: this.state.score - dotList[i].points});
+          }
           dotList.splice(i, 1);
         }
       }
@@ -215,6 +215,10 @@ class Game extends PureComponent {
     } else {
       this.setState({paused: !this.state.paused});
     }
+  }
+
+  toggleBrutal() {
+    this.setState({brutal: !this.state.brutal});
   }
 
   // popped animation
@@ -272,7 +276,7 @@ class Game extends PureComponent {
   }
 
   render() {
-    const {score, started, paused} = this.state;
+    const {brutal, score, started, paused} = this.state;
     const btnText = !started || paused ? 'START' : 'PAUSE';
 
     return (
@@ -280,9 +284,25 @@ class Game extends PureComponent {
         <div className="app-menu">
           <div className="app-score-wrapper">
             <b className="app-score">{score}</b>
-            <Button onClick={this.toggleGame} text={btnText} />
+            <Button
+              className="app-btn"
+              onClick={this.toggleGame}
+              text={btnText}
+            />
           </div>
-          <Range onChange={this.sliderChange} />
+          <div className="app-tools">
+            <Range onChange={this.sliderChange} />
+            <Checkbox
+              checked={brutal}
+              className="app-brutal"
+              id="brutal"
+              label={`😬`}
+              name="brutal"
+              onChange={this.toggleBrutal}
+              title="brutal mode substracts points if a dot reaches the end"
+              value="true"
+            />
+          </div>
         </div>
 
         {!started && <GameInstructions />}

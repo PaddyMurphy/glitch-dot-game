@@ -11,6 +11,7 @@ export function Dot(dotId, width, y, x, status, points, velocity) {
 }
 
 // exploding particle factory
+// https://css-tricks.com/adding-particle-effects-to-dom-elements-with-canvas/
 export function ExplodingParticle() {
   this.animationDuration = 1000;
   this.radius = 5 + Math.random() * 5;
@@ -64,6 +65,31 @@ export const GameInstructions = props => {
     <div className="app-instructions">
       Get points by popping randomly sized dots as they drift down. Smaller dots
       are worth more points. Use the slider to adjust speed.
+    </div>
+  );
+};
+
+export const Button = props => {
+  return (
+    <button className={props.className} onClick={props.onClick}>
+      {props.text}
+    </button>
+  );
+};
+
+export const Checkbox = props => {
+  return (
+    <div className={props.className}>
+      <label htmlFor={props.id} title={props.title}>
+        {props.label}
+      </label>
+      <input
+        type="checkbox"
+        id={props.id}
+        name={props.name}
+        onChange={props.onChange}
+        value={props.value}
+      />
     </div>
   );
 };

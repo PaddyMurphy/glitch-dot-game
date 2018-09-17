@@ -1,6 +1,10 @@
 @import './css/_minireset.scss';
 @import './css/_helpers.scss';
 
+body {
+  overflow: hidden;
+}
+
 .app {
   display: flex;
   flex-direction: column;
@@ -14,15 +18,20 @@
     pointer-events: all;
   }
 
-  &-slider {
+  &-tools {
     display: flex;
-    padding: $default-padding;
-    margin-right: 10px;
-    pointer-events: none;
+    justify-content: center;
+    margin: 0 auto;
+    padding: $default-padding $default-padding 0;
     @media (max-width: $screen-sm) {
       flex: 1;
-      margin-right: 0;
     }
+  }
+
+  &-slider {
+    display: flex;
+    margin-right: 20px;
+    pointer-events: none;
   }
 
   &-slider-input {
@@ -39,11 +48,11 @@
     &:after {
       content: '';
       display: inline-block;
-      font-size: 30px;
-      width: 30px;
-      height: 30px;
+      font-size: $icon-size;
+      width: $icon-size;
+      height: $icon-size;
       position: absolute;
-      top: -30px;
+      top: -$icon-size;
     }
 
     &:before {
@@ -72,7 +81,7 @@
     align-items: center;
     display: flex;
     flex: 1 1 0;
-    padding: $default-padding;
+    padding: $default-padding $default-padding 0;
   }
 
   &-score {
@@ -103,5 +112,22 @@
     right: 0;
     top: 25vh;
     width: 75vw;
+  }
+
+  &-brutal {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    font-size: $icon-size;
+    pointer-events: all;
+
+    input {
+      cursor: pointer;
+      font-size: $icon-size;
+    }
+
+    label {
+      cursor: pointer;
+    }
   }
 }
