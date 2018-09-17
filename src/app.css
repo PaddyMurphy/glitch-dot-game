@@ -177,6 +177,7 @@ body {
     pointer-events: all; }
     .app-brutal input {
       cursor: pointer;
-      font-size: 30px; }
+      font-size: 30px;
+      transform: translateY(-5px); }
     .app-brutal label {
       cursor: pointer; }

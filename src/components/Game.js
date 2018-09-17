@@ -200,7 +200,7 @@ class Game extends PureComponent {
         // remove after reaching past bottom
         if (dotList[i].y - dotList[i].width >= canvas.height) {
           // brutal mode substracts from the score
-          if (this.state.brutal) {
+          if (this.state.brutal && dotList[i].status === 1) {
             this.setState({score: this.state.score - dotList[i].points});
           }
           dotList.splice(i, 1);

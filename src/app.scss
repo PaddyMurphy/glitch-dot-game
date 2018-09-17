@@ -124,6 +124,7 @@ body {
     input {
       cursor: pointer;
       font-size: $icon-size;
+      transform: translateY(-5px);
     }
 
     label {
