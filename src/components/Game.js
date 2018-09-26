@@ -12,15 +12,13 @@ and receives points when they are successful.
 - clicking dot removes it and scores
 */
 import React, {PureComponent} from 'react';
+import GameMenu from './GameMenu';
 import {
-  Button,
-  Checkbox,
   Dot,
   ExplodingParticle,
   normalizeRange,
   getRandomIntInclusive,
   GameInstructions,
-  Range,
 } from './gameHelpers';
 import '../app.css';
 
@@ -282,37 +280,17 @@ class Game extends PureComponent {
 
     return (
       <div className="app">
-        <div className="app-menu">
-          <div className="app-score-wrapper">
-            <b className="app-score">{score}</b>
-            <Button
-              className="app-btn"
-              onClick={this.toggleGame}
-              text={btnText}
-            />
-          </div>
-          <div className="app-tools">
-            <Range
-              className="app-slider-input"
-              id="app-slider"
-              label="Speed adjustment"
-              min={minVelocity}
-              max={maxVelocity}
-              onChange={this.sliderChange}
-              velocity={velocity}
-            />
-            <Checkbox
-              checked={brutal}
-              className="app-brutal"
-              id="brutal"
-              label={`😬`}
-              name="brutal"
-              onChange={this.toggleBrutal}
-              title="brutal mode substracts points if a dot reaches the end"
-              value="true"
-            />
-          </div>
-        </div>
+        <GameMenu
+          maxVelocity={maxVelocity}
+          minVelocity={minVelocity}
+          score={score}
+          sliderChange={this.sliderChange}
+          btnText={btnText}
+          toggleBrutal={this.toggleBrutal}
+          toggleGame={this.toggleGame}
+          velocity={velocity}
+          checked={brutal}
+        />
 
         {!started && <GameInstructions />}
 
