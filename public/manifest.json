@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Dot Game",
+  "name": "Dot Game with React & canvas",
   "icons": [
     {
       "src": "favicon.ico",

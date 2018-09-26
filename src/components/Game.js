@@ -20,6 +20,7 @@ import {
   normalizeRange,
   getRandomIntInclusive,
   GameInstructions,
+  Range,
 } from './gameHelpers';
 import '../app.css';
 
@@ -35,27 +36,6 @@ let minWidth = 5; // radius
 let maxWidth = 50;
 let scoreScale = []; // mapped values for score and opacity
 let particles = [];
-
-const Range = props => {
-  return (
-    <div className="app-slider">
-      <label className="sr-only" htmlFor="app-slider">
-        Speed adjustment
-      </label>
-      <input
-        type="range"
-        className="app-slider-input"
-        name="app-slider"
-        id="app-slider"
-        min={minVelocity}
-        max={maxVelocity}
-        defaultValue={velocity}
-        step="1"
-        onChange={props.onChange}
-      />
-    </div>
-  );
-};
 
 class Game extends PureComponent {
   constructor(props) {
@@ -312,7 +292,15 @@ class Game extends PureComponent {
             />
           </div>
           <div className="app-tools">
-            <Range onChange={this.sliderChange} />
+            <Range
+              className="app-slider-input"
+              id="app-slider"
+              label="Speed adjustment"
+              min={minVelocity}
+              max={maxVelocity}
+              onChange={this.sliderChange}
+              velocity={velocity}
+            />
             <Checkbox
               checked={brutal}
               className="app-brutal"

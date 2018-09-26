@@ -93,3 +93,24 @@ export const Checkbox = props => {
     </div>
   );
 };
+
+export const Range = props => {
+  return (
+    <div className="app-slider">
+      <label className="sr-only" htmlFor="app-slider">
+        {props.label}
+      </label>
+      <input
+        type="range"
+        className={props.className}
+        name={props.id}
+        id={props.id}
+        min={props.min}
+        max={props.max}
+        defaultValue={props.velocity}
+        step="1"
+        onChange={props.onChange}
+      />
+    </div>
+  );
+};
