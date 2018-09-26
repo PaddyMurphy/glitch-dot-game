@@ -140,7 +140,8 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100vw; }
+    width: 100vw;
+    z-index: 1; }
   .app-score-wrapper {
     align-content: space-between;
     align-items: center;
@@ -155,7 +156,8 @@ body {
     text-align: center;
     padding: 10px; }
   .app-game {
-    background: #fff; }
+    background: #fff;
+    position: relative; }
     .app-game:hover {
       cursor: crosshair; }
   .app-instructions {
@@ -177,7 +179,13 @@ body {
     pointer-events: all; }
     .app-brutal input {
       cursor: pointer;
-      font-size: 30px;
-      transform: translateY(-5px); }
+      font-size: 30px; }
     .app-brutal label {
       cursor: pointer; }
+  .app-message {
+    font-size: 50px;
+    margin: 20vh auto 0;
+    pointer-events: none;
+    position: absolute;
+    text-align: center;
+    width: 100vw; }

@@ -97,8 +97,17 @@ class Game extends PureComponent {
     }
     // add a new dot every second
     dotInterval = window.setInterval(() => {
+      this.checkFocus();
       this.addDot();
     }, 1000);
+  }
+
+  checkFocus() {
+    const hasFocus = document.hasFocus() ? true : false;
+    // pause if document loses focus
+    if (!hasFocus && !this.state.paused) {
+      this.setState({paused: true});
+    }
   }
 
   drawDot() {
@@ -132,15 +141,23 @@ class Game extends PureComponent {
   }
 
   addDot() {
-    const hasFocus = document.hasFocus() ? true : false;
     // only add dots when game is running
-    if (this.state.paused || !this.state.started || !hasFocus) return;
+    if (this.state.paused || !this.state.started) return;
 
     const dotWidth = getRandomIntInclusive(minWidth, maxWidth);
     const dotY = -dotWidth; // start off canvas
-    const dotX = getRandomIntInclusive(1, canvas.width);
+    let dotX = getRandomIntInclusive(1, canvas.width);
     const status = 1;
     const points = normalizeRange(dotWidth, 1, 10, scoreScale);
+    // prevent right edge cutting off
+    if (dotX > canvas.width - dotWidth) {
+      dotX = dotX - dotWidth;
+    }
+    // prevent left edge cutting off
+    if (dotX <= dotWidth) {
+      dotX = dotWidth;
+    }
+
     // add random properties
     dotList[dotId++] = new Dot(
       dotId,
@@ -172,7 +189,7 @@ class Game extends PureComponent {
       // check status to prevent multiple clicks
       if (this.isDotClicked(pos, dot) && dot.status) {
         // set score and remove
-        this.setState({score: this.state.score + dot.points});
+        this.addScore(dot.points);
         dot.status = 0;
         // set up popped animation
         this.setupParticles(dot, pos);
@@ -186,22 +203,26 @@ class Game extends PureComponent {
     );
   }
 
+  addScore(points) {
+    this.setState(prevState => ({
+      score: prevState.score + points,
+    }));
+  }
+
+  subtractScore(points) {
+    this.setState(prevState => ({
+      score: prevState.score - points,
+    }));
+  }
+
   collisionDetection() {
     for (let i = dotList.length; i >= 0; i--) {
       if (dotList[i]) {
-        // prevent right edge cutting off
-        if (dotList[i].x > canvas.width - dotList[i].width) {
-          dotList[i].x = dotList[i].x - dotList[i].width;
-        }
-        // prevent left edge cutting off
-        if (dotList[i].x <= dotList[i].width) {
-          dotList[i].x = dotList[i].width;
-        }
         // remove after reaching past bottom
         if (dotList[i].y - dotList[i].width >= canvas.height) {
           // brutal mode substracts from the score
           if (this.state.brutal && dotList[i].status === 1) {
-            this.setState({score: this.state.score - dotList[i].points});
+            this.subtractScore(dotList[i].points);
           }
           dotList.splice(i, 1);
         }
@@ -213,12 +234,12 @@ class Game extends PureComponent {
     if (!this.state.started) {
       this.setState({started: true});
     } else {
-      this.setState({paused: !this.state.paused});
+      this.setState(prevState => ({paused: !prevState.paused}));
     }
   }
 
   toggleBrutal() {
-    this.setState({brutal: !this.state.brutal});
+    this.setState(prevState => ({brutal: !prevState.brutal}));
   }
 
   // popped animation
@@ -308,6 +329,7 @@ class Game extends PureComponent {
         {!started && <GameInstructions />}
 
         <div className="app-game">
+          {paused && <h2 className="app-message">PAUSED</h2>}
           <canvas id="game" />
         </div>
       </div>

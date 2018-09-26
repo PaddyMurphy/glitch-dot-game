@@ -74,6 +74,7 @@ body {
     top: 0;
     left: 0;
     width: 100vw;
+    z-index: 1;
   }
 
   &-score-wrapper {
@@ -95,6 +96,7 @@ body {
 
   &-game {
     background: #fff;
+    position: relative;
 
     &:hover {
       cursor: crosshair;
@@ -124,11 +126,19 @@ body {
     input {
       cursor: pointer;
       font-size: $icon-size;
-      transform: translateY(-5px);
     }
 
     label {
       cursor: pointer;
     }
+  }
+
+  &-message {
+    font-size: 50px;
+    margin: 20vh auto 0;
+    pointer-events: none;
+    position: absolute;
+    text-align: center;
+    width: 100vw;
   }
 }
