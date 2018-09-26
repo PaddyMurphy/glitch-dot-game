@@ -295,7 +295,7 @@ class Game extends PureComponent {
         {!started && <GameInstructions />}
 
         <div className="app-game">
-          {paused && <h2 className="app-message">PAUSED</h2>}
+          {paused && started && <h2 className="app-message">PAUSED</h2>}
           <canvas id="game" />
         </div>
       </div>

@@ -170,7 +170,8 @@ body {
     position: absolute;
     right: 0;
     top: 25vh;
-    width: 75vw; }
+    width: 75vw;
+    z-index: 1; }
   .app-brutal {
     align-items: center;
     display: flex;
