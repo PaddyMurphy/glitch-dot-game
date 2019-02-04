@@ -1,6 +1,13 @@
 {
-  "main.css": "static/css/main.d96517a9.css",
-  "main.css.map": "static/css/main.d96517a9.css.map",
-  "main.js": "static/js/main.cad39db0.js",
-  "main.js.map": "static/js/main.cad39db0.js.map"
+  "main.css": "/glitch-dot-game/static/css/main.f063a8b6.chunk.css",
+  "main.js": "/glitch-dot-game/static/js/main.16715210.chunk.js",
+  "main.js.map": "/glitch-dot-game/static/js/main.16715210.chunk.js.map",
+  "static/js/1.9d65a0d5.chunk.js": "/glitch-dot-game/static/js/1.9d65a0d5.chunk.js",
+  "static/js/1.9d65a0d5.chunk.js.map": "/glitch-dot-game/static/js/1.9d65a0d5.chunk.js.map",
+  "runtime~main.js": "/glitch-dot-game/static/js/runtime~main.9d80d2bc.js",
+  "runtime~main.js.map": "/glitch-dot-game/static/js/runtime~main.9d80d2bc.js.map",
+  "static/css/main.f063a8b6.chunk.css.map": "/glitch-dot-game/static/css/main.f063a8b6.chunk.css.map",
+  "index.html": "/glitch-dot-game/index.html",
+  "precache-manifest.f23b28ce5a552cc2b32c6ca41dbc5820.js": "/glitch-dot-game/precache-manifest.f23b28ce5a552cc2b32c6ca41dbc5820.js",
+  "service-worker.js": "/glitch-dot-game/service-worker.js"
 }

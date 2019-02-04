@@ -27,7 +27,8 @@
     "eslint-plugin-jsx-a11y": "^6.2.0",
     "eslint-plugin-prettier": "^3.0.1",
     "gh-pages": "^2.0.1",
-    "prettier": "^1.16.3"
+    "prettier": "^1.16.3",
+    "terser": "^3.14.1"
   },
   "engines": {
     "node": "8.x"
